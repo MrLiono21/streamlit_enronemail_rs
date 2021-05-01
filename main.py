@@ -14,6 +14,10 @@ dataset = st.beta_container()
 features = st.beta_container()
 model_training = st.beta_container()
 
+@st.cache
+def get_data(filename):
+    HR_DATA = pd.read_csv(filename)
+    return HR_DATA
 
 with header:
     st.title('Content-based Recommender System For Enron Email Dataset')
@@ -25,80 +29,11 @@ with header:
 with dataset:
     st.header('Amalgamation of the maildir folder')
     st.text("")
-    st.text('I got this dataset from Kaggle: https://www.kaggle.com/granjithkumar/it-employees-data-for-project-allocation?select=Employee_Designation.csv')
+    st.text('I got this dataset from this GitHub link: http://www.cs.cmu.edu/~./enron/')
 
-    def column(person):
-        import os
-        if path.exists("maildir/{}/sent/1.".format(person)):
-            file_list = []
-            for filename in os.listdir("maildir/{}/sent".format(person)):
-                file_list.append(filename)
-            file_list = file_list[0:2]
-            l = []
-            for i in file_list:
-                with open('maildir/{}/sent/{}'.format(person, i)) as fo:
-                    for rec in fo:
-                        l.append(str(rec))
-            return l
-        else:
-            if path.exists("maildir/{}/sent_items/1.".format(person)):
-                file_list = []
-                for filename in os.listdir("maildir/{}/sent_items".format(person)):
-                    file_list.append(filename)
-                file_list = file_list[0:2]
-                l = []
-                for i in file_list:
-                    with open('maildir/{}/sent_items/{}'.format(person, i)) as fo:
-                        for rec in fo:
-                            l.append(str(rec))
-                return l
-            else: 
-                if path.exists("maildir/{}/all_documents/1.".format(person)):
-                    file_list = []
-                    for filename in os.listdir("maildir/{}/all_documents".format(person)):
-                        file_list.append(filename)
-                    file_list = file_list[0:2]
-                    l = []
-                    for i in file_list:
-                        with open('maildir/{}/all_documents/{}'.format(person, i)) as fo:
-                            for rec in fo:
-                                l.append(str(rec))
-                    return l
-                else:
-                    if path.exists("maildir/{}/inbox/1.".format(person)):
-                        file_list = []
-                        for filename in os.listdir("maildir/{}/inbox".format(person)):
-                            file_list.append(filename)
-                        file_list = file_list[0:2]
-                        l = []
-                        for i in file_list:
-                            with open('maildir/{}/inbox/{}'.format(person, i)) as fo:
-                                for rec in fo:
-                                    l.append(str(rec))
-                        return l
-                    else:
-                        if path.exists("maildir/{}/chris_stokley/sent/1.".format(person)):
-                            file_list = []
-                            for filename in os.listdir("maildir/{}/chris_stokley/sent".format(person)):
-                                file_list.append(filename)
-                            file_list = file_list[0:2]
-                            l = []
-                            for i in file_list:
-                                with open('maildir/{}/chris_stokley/sent/{}'.format(person, i)) as fo:
-                                    for rec in fo:
-                                        l.append(str(rec))
-                            return l
-                        else:
-                            print(person)
-    list_names = ['allen-p', 'arnold-j', 'arora-h', 'badeer-r', 'bailey-s', 'bass-e', 'baughman-d', 'beck-s', 'benson-r', 'blair-l', 'brawner-s', 'buy-r', 'campbell-l', 'carson-m', 'cash-m', 'causholli-m', 'corman-s', 'crandell-s', 'cuilla-m', 'dasovich-j', 'davis-d', 'dean-c', 'delainey-d', 'derrick-j', 'dickson-s', 'donoho-l', 'donohoe-t', 'dorland-c', 'ermis-f', 'farmer-d', 'fischer-m', 'forney-j', 'fossum-d', 'gang-l', 'gay-r', 'geaccone-t', 'germany-c', 'gilbertsmith-d', 'giron-d', 'griffith-j', 'grigsby-m', 'guzman-m', 'haedicke-m', 'hain-m', 'harris-s', 'hayslett-r', 'heard-m', 'hendrickson-s', 'hernandez-j', 'hodge-j', 'holst-k', 'horton-s', 'hyatt-k', 'hyvl-d', 'jones-t', 'kaminski-v', 'kean-s', 'keavey-p', 'keiser-k', 'king-j', 'kitchen-l', 'kuykendall-t', 'lavorato-j', 'lay-k', 'lenhart-m', 'lewis-a', 'linder-e', 'lokay-m', 'lokey-t', 'love-p', 'lucci-p', 'maggi-m', 'mann-k', 'martin-t', 'may-l', 'mccarty-d', 'mcconnell-m', 'mckay-b', 'mckay-j', 'mclaughlin-e', 'merriss-s', 'meyers-a', 'mims-thurston-p', 'motley-m', 'neal-s', 'nemec-g', 'panus-s', 'parks-j', 'pereira-s', 'perlingiere-d', 'phanis-s', 'pimenov-v', 'platter-p', 'presto-k', 'quenet-j', 'quigley-d', 'rapp-b', 'reitmeyer-j', 'richey-c', 'ring-a', 'ring-r', 'rodrique-r', 'rogers-b', 'ruscitti-k', 'sager-e', 'saibi-e', 'salisbury-h', 'sanchez-m', 'sanders-r', 'scholtes-d', 'schoolcraft-d', 'schwieger-j', 'scott-s', 'semperger-c', 'shackleton-s', 'shankman-j', 'shapiro-r', 'shively-h', 'skilling-j', 'slinger-r', 'smith-m', 'solberg-g', 'south-s', 'staab-t', 'stclair-c', 'steffes-j', 'stepenovitch-j', 'stokley-c', 'storey-g', 'sturm-f', 'swerzbin-m', 'symes-k', 'taylor-m', 'tholt-j', 'thomas-p', 'townsend-j', 'tycholiz-b', 'ward-k', 'watson-k', 'weldon-c', 'whalley-g', 'whalley-l', 'white-s', 'whitt-m', 'williams-j', 'williams-w3', 'wolfe-j', 'ybarbo-p', 'zipper-a', 'zufferli-j']
-    data = []
-    for i in list_names:
-        rey = [i, str(column(i))]
-        data.append(rey) 
-    Enron_df = pd.DataFrame(data, columns = ['Employee_Name', 'Input']) 
+    Enron_df = pd.read_csv ('data/enron_email_dataset.csv')
     st.write(Enron_df.head())
 
-    
 with features:
     st.header('Features')
 
@@ -111,75 +46,8 @@ with model_training:
     sel_col, disp_col = st.beta_columns(2)
 
     input_name = sel_col.selectbox('Select any name from dataset', (Enron_df['Employee_Name']))
-    def column(person):
-        import os
-        if path.exists("maildir/{}/sent/1.".format(person)):
-            file_list = []
-            for filename in os.listdir("maildir/{}/sent".format(person)):
-                file_list.append(filename)
-            file_list = file_list[0:2]
-            l = []
-            for i in file_list:
-                with open('maildir/{}/sent/{}'.format(person, i)) as fo:
-                    for rec in fo:
-                        l.append(str(rec))
-            return l
-        else:
-            if path.exists("maildir/{}/sent_items/1.".format(person)):
-                file_list = []
-                for filename in os.listdir("maildir/{}/sent_items".format(person)):
-                    file_list.append(filename)
-                file_list = file_list[0:2]
-                l = []
-                for i in file_list:
-                    with open('maildir/{}/sent_items/{}'.format(person, i)) as fo:
-                        for rec in fo:
-                            l.append(str(rec))
-                return l
-            else: 
-                if path.exists("maildir/{}/all_documents/1.".format(person)):
-                    file_list = []
-                    for filename in os.listdir("maildir/{}/all_documents".format(person)):
-                        file_list.append(filename)
-                    file_list = file_list[0:2]
-                    l = []
-                    for i in file_list:
-                        with open('maildir/{}/all_documents/{}'.format(person, i)) as fo:
-                            for rec in fo:
-                                l.append(str(rec))
-                    return l
-                else:
-                    if path.exists("maildir/{}/inbox/1.".format(person)):
-                        file_list = []
-                        for filename in os.listdir("maildir/{}/inbox".format(person)):
-                            file_list.append(filename)
-                        file_list = file_list[0:2]
-                        l = []
-                        for i in file_list:
-                            with open('maildir/{}/inbox/{}'.format(person, i)) as fo:
-                                for rec in fo:
-                                    l.append(str(rec))
-                        return l
-                    else:
-                        if path.exists("maildir/{}/chris_stokley/sent/1.".format(person)):
-                            file_list = []
-                            for filename in os.listdir("maildir/{}/chris_stokley/sent".format(person)):
-                                file_list.append(filename)
-                            file_list = file_list[0:2]
-                            l = []
-                            for i in file_list:
-                                with open('maildir/{}/chris_stokley/sent/{}'.format(person, i)) as fo:
-                                    for rec in fo:
-                                        l.append(str(rec))
-                            return l
-                        else:
-                            print(person)
-    list_names = ['allen-p', 'arnold-j', 'arora-h', 'badeer-r', 'bailey-s', 'bass-e', 'baughman-d', 'beck-s', 'benson-r', 'blair-l', 'brawner-s', 'buy-r', 'campbell-l', 'carson-m', 'cash-m', 'causholli-m', 'corman-s', 'crandell-s', 'cuilla-m', 'dasovich-j', 'davis-d', 'dean-c', 'delainey-d', 'derrick-j', 'dickson-s', 'donoho-l', 'donohoe-t', 'dorland-c', 'ermis-f', 'farmer-d', 'fischer-m', 'forney-j', 'fossum-d', 'gang-l', 'gay-r', 'geaccone-t', 'germany-c', 'gilbertsmith-d', 'giron-d', 'griffith-j', 'grigsby-m', 'guzman-m', 'haedicke-m', 'hain-m', 'harris-s', 'hayslett-r', 'heard-m', 'hendrickson-s', 'hernandez-j', 'hodge-j', 'holst-k', 'horton-s', 'hyatt-k', 'hyvl-d', 'jones-t', 'kaminski-v', 'kean-s', 'keavey-p', 'keiser-k', 'king-j', 'kitchen-l', 'kuykendall-t', 'lavorato-j', 'lay-k', 'lenhart-m', 'lewis-a', 'linder-e', 'lokay-m', 'lokey-t', 'love-p', 'lucci-p', 'maggi-m', 'mann-k', 'martin-t', 'may-l', 'mccarty-d', 'mcconnell-m', 'mckay-b', 'mckay-j', 'mclaughlin-e', 'merriss-s', 'meyers-a', 'mims-thurston-p', 'motley-m', 'neal-s', 'nemec-g', 'panus-s', 'parks-j', 'pereira-s', 'perlingiere-d', 'phanis-s', 'pimenov-v', 'platter-p', 'presto-k', 'quenet-j', 'quigley-d', 'rapp-b', 'reitmeyer-j', 'richey-c', 'ring-a', 'ring-r', 'rodrique-r', 'rogers-b', 'ruscitti-k', 'sager-e', 'saibi-e', 'salisbury-h', 'sanchez-m', 'sanders-r', 'scholtes-d', 'schoolcraft-d', 'schwieger-j', 'scott-s', 'semperger-c', 'shackleton-s', 'shankman-j', 'shapiro-r', 'shively-h', 'skilling-j', 'slinger-r', 'smith-m', 'solberg-g', 'south-s', 'staab-t', 'stclair-c', 'steffes-j', 'stepenovitch-j', 'stokley-c', 'storey-g', 'sturm-f', 'swerzbin-m', 'symes-k', 'taylor-m', 'tholt-j', 'thomas-p', 'townsend-j', 'tycholiz-b', 'ward-k', 'watson-k', 'weldon-c', 'whalley-g', 'whalley-l', 'white-s', 'whitt-m', 'williams-j', 'williams-w3', 'wolfe-j', 'ybarbo-p', 'zipper-a', 'zufferli-j']
-    data = []
-    for i in list_names:
-        rey = [i, str(column(i))]
-        data.append(rey) 
-    Enron_df = pd.DataFrame(data, columns = ['Employee_Name', 'Input'])
+     
+    Enron_df = pd.read_csv ('data/enron_email_dataset.csv')
     sel_col.subheader('Name Details')
     sel_col.write(Enron_df.loc[Enron_df['Employee_Name'] == input_name])
 
