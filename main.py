@@ -19,6 +19,9 @@ def get_data(filename):
     HR_DATA = pd.read_csv(filename)
     return HR_DATA
 
+Enron_df = pd.read_csv ('data/enron_email_dataset.csv')
+
+
 with header:
     st.title('Content-based Recommender System For Enron Email Dataset')
     st.text("")
@@ -31,7 +34,6 @@ with dataset:
     st.text("")
     st.text('I got this dataset from this GitHub link: http://www.cs.cmu.edu/~./enron/')
 
-    Enron_df = pd.read_csv ('data/enron_email_dataset.csv')
     st.write(Enron_df.head())
 
 with features:
@@ -47,11 +49,9 @@ with model_training:
 
     input_name = sel_col.selectbox('Select any name from dataset', (Enron_df['Employee_Name']))
      
-    Enron_df = pd.read_csv ('data/enron_email_dataset.csv')
     sel_col.subheader('Name Details')
     sel_col.write(Enron_df.loc[Enron_df['Employee_Name'] == input_name])
 
-    
     metadata = Enron_df.copy()
     #Define a TF-IDF Vectorizer Object. Remove all english stop words such as 'the', 'a'
     tfidf = TfidfVectorizer(stop_words='english')
@@ -66,7 +66,6 @@ with model_training:
     cosine_model_df.head()
     def make_recommendations(movie_user_likes):
         return cosine_model_df[movie_user_likes].sort_values(ascending=False)[:10]
-
 
     recommender = make_recommendations(input_name)
 
